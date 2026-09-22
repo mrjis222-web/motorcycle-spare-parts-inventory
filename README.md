@@ -83,7 +83,6 @@ Users can view their account information from the profile section.
 
 ## Project Structure
 
-```text
 motorcycle-spare-parts-inventory/
 │
 ├── dashboard.php
@@ -118,7 +117,6 @@ motorcycle-spare-parts-inventory/
     ├── edit.php
     ├── index.php
     └── view.php
-```
 
 ## Requirements
 
@@ -144,23 +142,17 @@ Install XAMPP and start the following services:
 
 Place the project folder inside the XAMPP `htdocs` directory:
 
-```text
 C:\xampp\htdocs\motorcycle-spare-parts-inventory
-```
 
 ### Step 3: Create the Database
 
 Open phpMyAdmin:
 
-```text
 http://localhost/phpmyadmin/
-```
 
 Create the project database:
 
-```text
 spare_parts
-```
 
 Import or create the required database tables according to the SQL structure used by the project.
 
@@ -168,20 +160,16 @@ Import or create the required database tables according to the SQL structure use
 
 Open:
 
-```text
 config/db.php
-```
 
 Configure the database connection using your local MySQL settings.
 
 Typical XAMPP configuration:
 
-```text
 Host: localhost
 Username: root
 Password: 
 Database: spare_parts
-```
 
 If your MySQL password is different, update the password in `config/db.php`.
 
@@ -191,9 +179,7 @@ Make sure Apache and MySQL are running in XAMPP.
 
 Open the following URL in a browser:
 
-```text
 http://localhost/motorcycle-spare-parts-inventory/
-```
 
 ## How to Use
 
@@ -279,7 +265,9 @@ https://github.com/mrjis222-web/motorcycle-spare-parts-inventory
 
 ## Live Website
 
-The live website link will be added after deployment.
+Live Website:
+
+https://motoparts.site.je/
 
 ## Academic Project
 
@@ -293,3 +281,4 @@ This project was developed as an individual assignment for:
 
 **Developed by Md Jawad Alam**
 **Student ID: 2022100000009**
+
