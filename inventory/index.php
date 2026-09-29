@@ -1,4 +1,5 @@
 <?php
+
 require_once "../includes/auth_check.php";
 require_once "../config/db.php";
 
@@ -13,17 +14,23 @@ $params = [];
 $types = "";
 
 if ($search !== "") {
+
     $sql .= " AND (part_name LIKE ? OR part_code LIKE ?)";
+
     $search_value = "%" . $search . "%";
 
     $params[] = $search_value;
     $params[] = $search_value;
+
     $types .= "ss";
 }
 
 if ($category !== "") {
+
     $sql .= " AND category = ?";
+
     $params[] = $category;
+
     $types .= "s";
 }
 
@@ -36,24 +43,35 @@ if (!empty($params)) {
 }
 
 $stmt->execute();
+
 $result = $stmt->get_result();
 
 $categories = $conn->query(
-    "SELECT DISTINCT category FROM spare_parts ORDER BY category ASC"
+    "SELECT DISTINCT category
+     FROM spare_parts
+     ORDER BY category ASC"
 );
+
+// Check user role
+$is_admin = (($_SESSION["user_role"] ?? "") === "admin");
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Inventory | MotoParts</title>
 
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet"
+          href="../assets/css/style.css">
+
 </head>
 
 <body>
@@ -61,13 +79,17 @@ $categories = $conn->query(
 <div class="page-shell">
 
     <!-- Navbar -->
+
     <nav class="navbar">
 
         <div class="nav-brand">
+
             <a href="../dashboard.php">
                 🏍️ MotoParts
             </a>
+
         </div>
+
 
         <div class="nav-links">
 
@@ -79,16 +101,24 @@ $categories = $conn->query(
                 Inventory
             </a>
 
-            <a href="add.php">
-                Add Part
-            </a>
+            <?php if ($is_admin): ?>
+
+                <a href="add.php">
+                    Add Part
+                </a>
+
+            <?php endif; ?>
+
 
             <a href="../profile.php">
                 Profile
             </a>
 
-            <a href="../auth/logout.php" class="logout-btn">
+            <a href="../auth/logout.php"
+               class="logout-btn">
+
                 Logout
+
             </a>
 
         </div>
@@ -97,33 +127,40 @@ $categories = $conn->query(
 
 
     <!-- Main -->
+
     <main class="inventory-page">
 
-    <?php if (isset($_GET["deleted"])): ?>
 
-    <div class="success-message">
-        Spare part deleted successfully.
-    </div>
+        <!-- Success Messages -->
 
-<?php endif; ?>
+        <?php if (isset($_GET["deleted"])): ?>
 
+            <div class="success-message">
+                Spare part deleted successfully.
+            </div>
 
-<?php if (isset($_GET["updated"])): ?>
-
-    <div class="success-message">
-        Spare part updated successfully.
-    </div>
-
-<?php endif; ?>
+        <?php endif; ?>
 
 
-<?php if (isset($_GET["success"])): ?>
+        <?php if (isset($_GET["updated"])): ?>
 
-    <div class="success-message">
-        Spare part added successfully.
-    </div>
+            <div class="success-message">
+                Spare part updated successfully.
+            </div>
 
-<?php endif; ?>
+        <?php endif; ?>
+
+
+        <?php if (isset($_GET["success"])): ?>
+
+            <div class="success-message">
+                Spare part added successfully.
+            </div>
+
+        <?php endif; ?>
+
+
+        <!-- Inventory Header -->
 
         <div class="inventory-header">
 
@@ -143,14 +180,23 @@ $categories = $conn->query(
 
             </div>
 
-            <a href="add.php" class="add-part-btn">
-                + Add Spare Part
-            </a>
+
+            <?php if ($is_admin): ?>
+
+                <a href="add.php"
+                   class="add-part-btn">
+
+                    + Add Spare Part
+
+                </a>
+
+            <?php endif; ?>
 
         </div>
 
 
         <!-- Search & Filter -->
+
         <div class="filter-card">
 
             <form method="GET" action="">
@@ -178,11 +224,13 @@ $categories = $conn->query(
                         Category
                     </label>
 
-                    <select id="category" name="category">
+                    <select id="category"
+                            name="category">
 
                         <option value="">
                             All Categories
                         </option>
+
 
                         <?php while ($cat = $categories->fetch_assoc()): ?>
 
@@ -190,7 +238,9 @@ $categories = $conn->query(
                                 value="<?php echo htmlspecialchars($cat["category"]); ?>"
                                 <?php echo ($category === $cat["category"]) ? "selected" : ""; ?>
                             >
+
                                 <?php echo htmlspecialchars($cat["category"]); ?>
+
                             </option>
 
                         <?php endwhile; ?>
@@ -202,12 +252,19 @@ $categories = $conn->query(
 
                 <div class="filter-buttons">
 
-                    <button type="submit" class="search-btn">
+                    <button type="submit"
+                            class="search-btn">
+
                         Search
+
                     </button>
 
-                    <a href="index.php" class="reset-btn">
+
+                    <a href="index.php"
+                       class="reset-btn">
+
                         Reset
+
                     </a>
 
                 </div>
@@ -218,7 +275,9 @@ $categories = $conn->query(
 
 
         <!-- Inventory Table -->
+
         <div class="inventory-card">
+
 
             <div class="inventory-card-header">
 
@@ -238,6 +297,7 @@ $categories = $conn->query(
 
 
             <?php if ($result->num_rows > 0): ?>
+
 
                 <div class="table-wrapper">
 
@@ -267,9 +327,12 @@ $categories = $conn->query(
 
                         </thead>
 
+
                         <tbody>
 
+
                         <?php while ($part = $result->fetch_assoc()): ?>
+
 
                             <tr>
 
@@ -277,33 +340,59 @@ $categories = $conn->query(
                                     #<?php echo (int)$part["id"]; ?>
                                 </td>
 
+
                                 <td>
+
                                     <strong>
                                         <?php echo htmlspecialchars($part["part_name"]); ?>
                                     </strong>
+
                                 </td>
 
+
                                 <td>
+
                                     <span class="part-code">
+
                                         <?php echo htmlspecialchars($part["part_code"]); ?>
+
                                     </span>
+
                                 </td>
 
+
                                 <td>
+
                                     <?php echo htmlspecialchars($part["category"]); ?>
+
                                 </td>
 
+
                                 <td>
+
                                     <?php echo (int)$part["quantity"]; ?>
+
                                 </td>
 
-                                <td>
-                                    ৳<?php echo number_format((float)$part["price"], 2); ?>
-                                </td>
 
                                 <td>
 
-                                    <?php if ((int)$part["quantity"] <= (int)$part["reorder_level"]): ?>
+                                    ৳<?php echo number_format(
+                                        (float)$part["price"],
+                                        2
+                                    ); ?>
+
+                                </td>
+
+
+                                <td>
+
+
+                                    <?php if (
+                                        (int)$part["quantity"]
+                                        <=
+                                        (int)$part["reorder_level"]
+                                    ): ?>
 
                                         <span class="status-badge low">
                                             Low Stock
@@ -317,26 +406,51 @@ $categories = $conn->query(
 
                                     <?php endif; ?>
 
+
                                 </td>
+
 
                                 <td>
 
                                     <div class="action-buttons">
 
-                                        <a
-                                            href="edit.php?id=<?php echo (int)$part["id"]; ?>"
-                                            class="edit-btn"
-                                        >
-                                            Edit
-                                        </a>
+
+                                        <!-- View -->
 
                                         <a
-                                            href="delete.php?id=<?php echo (int)$part["id"]; ?>"
-                                            class="delete-btn"
-                                            onclick="return confirm('Are you sure you want to delete this spare part?');"
+                                            href="view.php?id=<?php echo (int)$part["id"]; ?>"
+                                            class="view-btn"
                                         >
-                                            Delete
+                                            View
                                         </a>
+
+
+                                        <?php if ($is_admin): ?>
+
+
+                                            <!-- Edit -->
+
+                                            <a
+                                                href="edit.php?id=<?php echo (int)$part["id"]; ?>"
+                                                class="edit-btn"
+                                            >
+                                                Edit
+                                            </a>
+
+
+                                            <!-- Delete -->
+
+                                            <a
+                                                href="delete.php?id=<?php echo (int)$part["id"]; ?>"
+                                                class="delete-btn"
+                                                onclick="return confirm('Are you sure you want to delete this spare part?');"
+                                            >
+                                                Delete
+                                            </a>
+
+
+                                        <?php endif; ?>
+
 
                                     </div>
 
@@ -344,7 +458,9 @@ $categories = $conn->query(
 
                             </tr>
 
+
                         <?php endwhile; ?>
+
 
                         </tbody>
 
@@ -352,7 +468,9 @@ $categories = $conn->query(
 
                 </div>
 
+
             <?php else: ?>
+
 
                 <div class="empty-inventory">
 
@@ -360,21 +478,34 @@ $categories = $conn->query(
                         📦
                     </div>
 
+
                     <h3>
                         No spare parts found
                     </h3>
+
 
                     <p>
                         Try a different search or add your first spare part.
                     </p>
 
-                    <a href="add.php" class="add-part-btn">
-                        + Add Spare Part
-                    </a>
+
+                    <?php if ($is_admin): ?>
+
+                        <a href="add.php"
+                           class="add-part-btn">
+
+                            + Add Spare Part
+
+                        </a>
+
+                    <?php endif; ?>
+
 
                 </div>
 
+
             <?php endif; ?>
+
 
         </div>
 
@@ -389,7 +520,9 @@ $categories = $conn->query(
 
     </footer>
 
+
 </div>
 
 </body>
+
 </html>

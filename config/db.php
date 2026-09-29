@@ -1,9 +1,10 @@
+
 <?php
 
-$host = "localhost";
-$username = "root";
-$password = "";
-$database = "motorcycle_inventory";
+$host = "sql204.infinityfree.com";
+$username = "if0_42977035";
+$password = "spadrinkwater";
+$database = "if0_42977035_spare_parts";
 
 $conn = new mysqli($host, $username, $password, $database);
 

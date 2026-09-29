@@ -1,3 +1,4 @@
+
 <?php
 
 session_start();
@@ -26,40 +27,55 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     } else {
 
-        $sql = "SELECT id, name, email, password FROM users WHERE email = ?";
+        // Get user information including role
+        $sql = "SELECT id, name, email, password, role
+                FROM users
+                WHERE email = ?";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
 
-        $result = $stmt->get_result();
+        if ($stmt) {
 
-        if ($result->num_rows === 1) {
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
 
-            $user = $result->fetch_assoc();
+            $result = $stmt->get_result();
 
-            if (password_verify($password, $user["password"])) {
+            if ($result->num_rows === 1) {
 
-                session_regenerate_id(true);
+                $user = $result->fetch_assoc();
 
-                $_SESSION["user_id"] = $user["id"];
-                $_SESSION["user_name"] = $user["name"];
-                $_SESSION["user_email"] = $user["email"];
+                // Verify hashed password
+                if (password_verify($password, $user["password"])) {
 
-                header("Location: ../dashboard.php");
-                exit;
+                    // Prevent session fixation
+                    session_regenerate_id(true);
+
+                    // Store authenticated user information
+                    $_SESSION["user_id"] = $user["id"];
+                    $_SESSION["user_name"] = $user["name"];
+                    $_SESSION["user_email"] = $user["email"];
+                    $_SESSION["user_role"] = $user["role"];
+
+                    header("Location: ../dashboard.php");
+                    exit;
+
+                } else {
+
+                    $error = "Invalid email or password.";
+                }
 
             } else {
 
                 $error = "Invalid email or password.";
             }
 
+            $stmt->close();
+
         } else {
 
-            $error = "Invalid email or password.";
+            $error = "Something went wrong. Please try again.";
         }
-
-        $stmt->close();
     }
 }
 
