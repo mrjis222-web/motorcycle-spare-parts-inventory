@@ -188,6 +188,16 @@ $stmt->close();
 
                     </div>
 
+                    <div class="profile-info-item">
+    <span class="profile-label">Role</span>
+    <span class="profile-value">
+        <?php
+        echo htmlspecialchars(
+            ucfirst($_SESSION["user_role"] ?? "staff")
+        );
+        ?>
+    </span>
+</div>
 
                     <div class="information-item">
 

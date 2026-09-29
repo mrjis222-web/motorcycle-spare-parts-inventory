@@ -2188,3 +2188,21 @@ a {
     }
 
 }
+
+.role-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.admin-role {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.staff-role {
+    background: #e3f2fd;
+    color: #1565c0;
+}
